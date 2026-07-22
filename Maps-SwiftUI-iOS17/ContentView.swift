@@ -9,24 +9,36 @@ import SwiftUI
 import MapKit
 
 struct ContentView: View {
-    let cameraPosition : MapCameraPosition = .region(.init(center: .init(latitude: 37.3346, longitude: -122.0099), latitudinalMeters: 1300, longitudinalMeters: 1300))
+    let cameraPosition: MapCameraPosition = .region(
+        MKCoordinateRegion(
+            center: CLLocationCoordinate2D(latitude: 37.3346, longitude: -122.0099),
+            latitudinalMeters: 1300,
+            longitudinalMeters: 1300
+        )
+    )
+    
+    let locationManager = CLLocationManager()
+    
     var body: some View {
-        Map(initialPosition: cameraPosition){
-//            Marker("Apple visitor centre",systemImage: "laptopcomputer", coordinate: .appleVisitorCentre)
-//            Marker("panamaPark", systemImage: "tree.fil", coordinate: .panamaPark)
-//                .tint(.green)
+        Map(initialPosition: cameraPosition) {
+            Marker("Apple Visitor Centre", systemImage: "laptopcomputer", coordinate: .appleVisitorCentre)
+            Marker("Panama Park", systemImage: "tree.fill", coordinate: .panamaPark)
+                .tint(.green)
             
-            Annotation("AppleHQ", coordinate: .applleHQ, anchor: .bottom){
+            Annotation("Apple HQ", coordinate: .appleHQ, anchor: .bottom) {
                 Image(systemName: "laptopcomputer")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .foregroundStyle(.white)
                     .frame(width: 20, height: 20)
                     .padding()
-                    .background(.pink.gradient,in: .circle)
+                    .background(.pink.gradient, in: .circle)
             }
             
-            
+            UserAnnotation()
+        }
+        .onAppear {
+            locationManager.requestWhenInUseAuthorization()
         }
     }
 }
@@ -36,7 +48,7 @@ struct ContentView: View {
 }
 
 extension CLLocationCoordinate2D {
-    static let applleHQ = CLLocationCoordinate2D(latitude: 37.3346, longitude: -122.0099)
+    static let appleHQ = CLLocationCoordinate2D(latitude: 37.3346, longitude: -122.0099)
     static let appleVisitorCentre = CLLocationCoordinate2D(latitude: 37.332753, longitude: -122.005372)
     static let panamaPark = CLLocationCoordinate2D(latitude: 37.347745, longitude: -122.018715)
 }
