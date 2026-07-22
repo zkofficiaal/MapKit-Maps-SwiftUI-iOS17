@@ -9,8 +9,9 @@ import SwiftUI
 import MapKit
 
 struct ContentView: View {
+    let cameraPosition : MapCameraPosition = .region(.init(center: .init(latitude: 37.3346, longitude: -122.0099), latitudinalMeters: 1300, longitudinalMeters: 1300))
     var body: some View {
-        Map()
+        Map(initialPosition: cameraPosition)
     }
 }
 
