@@ -48,7 +48,7 @@ struct ContentView: View {
             MapScaleView()
             
         }
-       // .mapStyle(.standard)
+        .mapStyle(.hybrid(elevation: .realistic))
         
     }
 }
