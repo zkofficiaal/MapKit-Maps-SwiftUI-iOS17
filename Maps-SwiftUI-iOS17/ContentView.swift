@@ -19,13 +19,17 @@ struct ContentView: View {
     
     let locationManager = CLLocationManager()
     
+    @State private var lookAroundScene : MKLookAroundScene?
+    @State private var isShowingLookAroundScene: Bool = false
+    
     var body: some View {
         Map(initialPosition: cameraPosition) {
-            Marker("Apple Visitor Centre", systemImage: "laptopcomputer", coordinate: .appleVisitorCentre)
-            Marker("Panama Park", systemImage: "tree.fill", coordinate: .panamaPark)
-                .tint(.green)
+//            Marker("Apple Visitor Centre", systemImage: "laptopcomputer", coordinate: .appleVisitorCentre)
+//            Marker("Panama Park", systemImage: "tree.fill", coordinate: .panamaPark)
+//                .tint(.green)
+//
             
-            Annotation("Apple HQ", coordinate: .appleHQ, anchor: .bottom) {
+            Annotation("AppleVisitorCentre", coordinate: .appleVisitorCentre, anchor: .bottom) {
                 Image(systemName: "laptopcomputer")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -33,9 +37,47 @@ struct ContentView: View {
                     .frame(width: 20, height: 20)
                     .padding()
                     .background(.pink.gradient, in: .circle)
+                    .contextMenu{
+                        Button("Open Look Around", systemImage: "binoculars"){
+                            Task{
+                                lookAroundScene = await getLookAroundScene(from: .appleVisitorCentre)
+                                guard let lookAroundScene else{
+                                    return
+                                }
+                                isShowingLookAroundScene = true
+                            }
+                        }
+                        Button("Get Direction", systemImage: "arrow.turn.down.right"){
+                        }
+                    }
+                    
+            }
+            
+            Annotation("Panama Park", coordinate: .panamaPark, anchor: .bottom) {
+                Image(systemName: "tree.fill")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .foregroundStyle(.white)
+                    .frame(width: 20, height: 20)
+                    .padding()
+                    .background(.pink.gradient, in: .circle)
+                    .contextMenu{
+                        Button("Open Look Around", systemImage: "binoculars"){
+                            Task{
+                                lookAroundScene = await getLookAroundScene(from: .panamaPark)
+                                guard let lookAroundScene else{
+                                    return
+                                }
+                                isShowingLookAroundScene = true
+                            }
+                        }
+                        Button("Get Direction", systemImage: "arrow.turn.down.right"){
+                        }
+                    }
             }
             
             UserAnnotation()
+            
         }
         .tint(.pink)
         .onAppear {
@@ -49,7 +91,17 @@ struct ContentView: View {
             
         }
         .mapStyle(.hybrid(elevation: .realistic))
-        
+        .lookAroundViewer(isPresented: $isShowingLookAroundScene, scene: $lookAroundScene)
+    }
+    
+    func getLookAroundScene (from coordinate : CLLocationCoordinate2D) async -> MKLookAroundScene? {
+        do {
+            return try await MKLookAroundSceneRequest(coordinate: coordinate).scene
+        }
+        catch{
+            print("cannot retrive look areoun scene \(error.localizedDescription)")
+            return nil
+        }
     }
 }
 
