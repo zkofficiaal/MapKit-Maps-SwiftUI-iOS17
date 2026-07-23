@@ -37,9 +37,19 @@ struct ContentView: View {
             
             UserAnnotation()
         }
+        .tint(.pink)
         .onAppear {
             locationManager.requestWhenInUseAuthorization()
         }
+        .mapControls {
+            MapUserLocationButton()
+            MapCompass()
+            MapPitchToggle()
+            MapScaleView()
+            
+        }
+       // .mapStyle(.standard)
+        
     }
 }
 
